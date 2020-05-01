@@ -1,0 +1,52 @@
+
+; You may customize this and other start-up templates; 
+; The location of this template is c:\emu8086\inc\0_com_template.txt
+
+org 100h  
+.model small
+.stack 100h
+.data
+nl db 0dh, 0ah, '$'
+.code
+
+proc main
+mov dx, @data
+mov ds, dx  
+  L0: 
+    mov cx, 5
+  
+  L1:             ; print 5 stars in a line
+    mov dl, '*'
+    mov ah, 2
+    int 21h
+    loop L1
+    
+    lea dx, nl   ; print new line
+    mov ah, 9
+    int 21h
+    
+  L2:            ; check if key pressed
+    mov ah, 1
+    int 16h
+    jnz key_pressed
+    jmp L0          
+    
+  key_pressed: 
+    mov ah, 0  
+    int 16h    ;consume key from buffer
+    mov dl, al ;ASCII key in DL
+    
+    mov ah, 2
+    int 21h  
+    cmp dl, 'q' ; quiting
+    je exit
+    jmp L0
+  exit:
+mov ah, 4ch
+int 21h
+endp main 
+
+end main
+
+
+
